@@ -1,6 +1,7 @@
 package com.titicorp.titi.network
 
 import com.titicorp.titi.model.Product
+import com.titicorp.titi.model.PublishableProduct
 import com.titicorp.titi.model.SimpleProduct
 import com.titicorp.titi.model.SimpleUser
 import kotlinx.coroutines.delay
@@ -78,5 +79,10 @@ object TitiApi {
                 }
             },
         )
+    }
+
+    suspend fun publishProduct(product: PublishableProduct): String {
+        delay(500)
+        return "1"
     }
 }

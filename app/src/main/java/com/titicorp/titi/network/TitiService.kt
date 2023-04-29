@@ -1,8 +1,11 @@
 package com.titicorp.titi.network
 
 import com.titicorp.titi.model.Product
+import com.titicorp.titi.model.PublishableProduct
 import com.titicorp.titi.model.SimpleProduct
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Path
 
 interface TitiService {
@@ -14,5 +17,10 @@ interface TitiService {
     suspend fun getProductDetails(
         @Path("id") id: String
     ): Product
+
+    @POST("/products/new")
+    suspend fun publishProduct(
+        @Body product: PublishableProduct
+    ): String
 
 }

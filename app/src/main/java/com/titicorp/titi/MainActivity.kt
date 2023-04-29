@@ -4,13 +4,18 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.*
-import androidx.compose.runtime.Composable
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.BottomNavigation
+import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.Icon
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavType
@@ -26,6 +31,7 @@ import com.titicorp.titi.ui.screen.chats.newchat.NewChat
 import com.titicorp.titi.ui.screen.home.Home
 import com.titicorp.titi.ui.screen.my.My
 import com.titicorp.titi.ui.screen.product.Product
+import com.titicorp.titi.ui.screen.product.newproduct.NewProduct
 import com.titicorp.titi.ui.theme.TitiTheme
 
 class MainActivity : AppCompatActivity() {
@@ -67,6 +73,18 @@ class MainActivity : AppCompatActivity() {
                                 )
                             }
                         }
+                    },
+                    floatingActionButton = {
+                        FloatingActionButton(
+                            onClick = { navController.navigate(Screen.NewProduct.route) }
+                        ) {
+                            Icon(
+                                modifier = Modifier
+                                    .size(24.dp),
+                                painter = painterResource(id = R.drawable.add),
+                                contentDescription = null
+                            )
+                        }
                     }
                 ) { innerPadding ->
                     NavHost(
@@ -88,22 +106,10 @@ class MainActivity : AppCompatActivity() {
                             )
                         }
                         composable(Screen.NewChat.route) { NewChat(navController) }
+                        composable(Screen.NewProduct.route) { NewProduct(navController) }
                     }
                 }
             }
-        }
-    }
-
-    @Composable
-    fun Greeting(name: String) {
-        Text(text = "Hello $name!")
-    }
-
-    @Preview(showBackground = true)
-    @Composable
-    fun DefaultPreview() {
-        TitiTheme {
-            Greeting("Android")
         }
     }
 

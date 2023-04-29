@@ -45,4 +45,6 @@ sealed class Screen(
     object Product: Screen("product/{id}")
 
     object NewChat: Screen("new_chat")
+
+    object NewProduct: Screen("new_product")
 }
