@@ -1,8 +1,8 @@
 package com.titicorp.titi
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
@@ -13,19 +13,22 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.titicorp.titi.ui.screen.Screen
 import com.titicorp.titi.ui.screen.category.Category
 import com.titicorp.titi.ui.screen.chats.Chats
+import com.titicorp.titi.ui.screen.chats.newchat.NewChat
 import com.titicorp.titi.ui.screen.home.Home
 import com.titicorp.titi.ui.screen.my.My
 import com.titicorp.titi.ui.screen.product.Product
 import com.titicorp.titi.ui.theme.TitiTheme
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -75,7 +78,16 @@ class MainActivity : ComponentActivity() {
                         composable(Screen.Main.Category.route) { Category(navController) }
                         composable(Screen.Main.Chats.route) { Chats(navController) }
                         composable(Screen.Main.My.route) { My(navController) }
-                        composable(Screen.Product.route) { Product(navController)}
+                        composable(
+                            route = Screen.Product.route,
+                            arguments = listOf(navArgument("id") { type = NavType.StringType })
+                        ) {
+                            Product(
+                                navController = navController,
+                                id = requireNotNull(it.arguments?.getString("id"))
+                            )
+                        }
+                        composable(Screen.NewChat.route) { NewChat(navController) }
                     }
                 }
             }
