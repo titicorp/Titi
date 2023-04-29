@@ -38,7 +38,10 @@ import com.titicorp.titi.ui.screen.Screen
 fun Product(
     navController: NavHostController,
     id: String,
-    viewModel: ProductViewModel = viewModel(factory = ProductViewModel.Factory(id)),
+    viewModel: ProductViewModel = viewModel(
+        key = id,
+        factory = ProductViewModel.Factory(id),
+    ),
 ) {
     Column(
         modifier = Modifier
@@ -80,14 +83,14 @@ fun Product(
                     item(span = { GridItemSpan(2) }) { SectionLabel(name = "More from the same user") }
                     items(state.product.moreFromUser) {
                         SimilarProductItem(it) {
-
+                            navController.navigate("product/${it.id}")
                         }
                     }
 
                     item(span = { GridItemSpan(2) }) { SectionLabel(name = "Similar products") }
                     items(state.product.similarProducts) {
                         SimilarProductItem(it) {
-
+                            navController.navigate("product/${it.id}")
                         }
                     }
                 }
