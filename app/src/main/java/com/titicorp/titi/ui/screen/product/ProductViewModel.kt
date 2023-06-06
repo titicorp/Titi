@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.titicorp.titi.model.Product
+import com.titicorp.titi.model.SimpleProduct
 import com.titicorp.titi.network.TitiApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,31 +17,51 @@ class ProductViewModel(
     private val api: TitiApi = TitiApi,
 ) : ViewModel() {
 
-    private val _uiState: MutableStateFlow<UiState> = MutableStateFlow(UiState.Loading)
+    private val _uiState: MutableStateFlow<UiState> = MutableStateFlow(
+        UiState()
+    )
     val uiState: StateFlow<UiState> = _uiState
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
             loadProductDetails()
+            loadMoreItemsFromUser()
+            loadSimilarProducts()
         }
     }
 
-    private suspend fun loadProductDetails() {
+    private suspend fun loadProductDetails() = viewModelScope.launch {
         val product = api.getProductDetails(id)
         _uiState.update {
-            UiState.Content(
+            it.copy(
                 product = product
             )
         }
     }
 
-    sealed interface UiState {
-        object Loading : UiState
-
-        data class Content(
-            val product: Product,
-        ) : UiState
+    private suspend fun loadMoreItemsFromUser() = viewModelScope.launch {
+        val items = api.getMoreItemsFromUser(id)
+        _uiState.update {
+            it.copy(
+                moreItemsFromUser = items
+            )
+        }
     }
+
+    private suspend fun loadSimilarProducts() = viewModelScope.launch {
+        val items = api.getSimilarItems(id)
+        _uiState.update {
+            it.copy(
+                similarItems = items
+            )
+        }
+    }
+
+    data class UiState(
+        val product: Product? = null,
+        val moreItemsFromUser: List<SimpleProduct>? = null,
+        val similarItems: List<SimpleProduct>? = null,
+    )
 
     @Suppress("UNCHECKED_CAST")
     class Factory(private val id: String) : ViewModelProvider.Factory {

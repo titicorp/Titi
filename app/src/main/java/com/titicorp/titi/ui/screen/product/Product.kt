@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.pager.HorizontalPager
@@ -56,54 +57,51 @@ fun Product(
 
         val uiState by viewModel.uiState.collectAsState()
 
-        when (val state = uiState) {
-            is ProductViewModel.UiState.Loading -> Loading()
-            is ProductViewModel.UiState.Content -> {
-                LazyVerticalGrid(
+        LazyVerticalGrid(
+            modifier = Modifier
+                .weight(1f),
+            columns = GridCells.Fixed(2)
+        ) {
+            item(span = { GridItemSpan(2) }) {
+                Column(
                     modifier = Modifier
-                        .weight(1f),
-                    columns = GridCells.Fixed(2)
+                        .fillMaxSize()
                 ) {
-                    item(span = { GridItemSpan(2) }) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                        ) {
-                            Images(state.product.images)
-                            UserDetails(state.product.user)
-                            Divider()
-                            Title()
-                            CategoryAndTime()
-                            Description()
-                            Metas()
-                            Divider()
-                        }
-                    }
-
-                    item(span = { GridItemSpan(2) }) { SectionLabel(name = "More from the same user") }
-                    items(state.product.moreFromUser) {
-                        SimilarProductItem(it) {
-                            navController.navigate("product/${it.id}")
-                        }
-                    }
-
-                    item(span = { GridItemSpan(2) }) { SectionLabel(name = "Similar products") }
-                    items(state.product.similarProducts) {
-                        SimilarProductItem(it) {
-                            navController.navigate("product/${it.id}")
-                        }
-                    }
+                    Images(uiState.product?.images)
+                    UserDetails(uiState.product?.user)
+                    Divider()
+                    Title()
+                    CategoryAndTime()
+                    Description()
+                    Metas()
+                    Divider()
                 }
-                Divider()
-                Price(
-                    value = state.product.price,
-                    onClickCall = {},
-                    onClickChat = {
-                        navController.navigate(Screen.NewChat.route)
-                    },
-                )
             }
+
+            SuggestedProducts(
+                items = uiState.moreItemsFromUser,
+                label = "More from the same user",
+                onItemClick = {
+                    navController.navigate("product/${it}")
+                }
+            )
+
+            SuggestedProducts(
+                items = uiState.similarItems,
+                label = "Similar products",
+                onItemClick = {
+                    navController.navigate("product/${it}")
+                }
+            )
         }
+        Divider()
+        Price(
+            value = uiState.product?.price ?: 0,
+            onClickCall = {},
+            onClickChat = {
+                navController.navigate(Screen.NewChat.route)
+            },
+        )
     }
 }
 
@@ -135,49 +133,56 @@ private fun TopNavigation(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun Images(images: List<String>) {
+private fun Images(images: List<String>?) {
     Box(
         modifier = Modifier
             .height(300.dp)
     ) {
         val pagerState = rememberPagerState()
-        HorizontalPager(
-            pageCount = images.size,
-            state = pagerState,
-        ) {
-            AsyncImage(
-                modifier = Modifier
-                    .fillMaxSize(),
-                model = images[it],
-                contentScale = ContentScale.Crop,
-                contentDescription = null
-            )
-        }
-        Row(
-            Modifier
-                .height(30.dp)
-                .fillMaxWidth()
-                .align(Alignment.BottomCenter),
-            horizontalArrangement = Arrangement.Center
-        ) {
-            repeat(images.size) { iteration ->
-                val color =
-                    if (pagerState.currentPage == iteration) Color.White else Color.LightGray
-                Box(
+        if (images != null) {
+            HorizontalPager(
+                pageCount = images.size,
+                state = pagerState,
+            ) {
+                AsyncImage(
                     modifier = Modifier
-                        .padding(5.dp)
-                        .clip(CircleShape)
-                        .background(color)
-                        .size(8.dp)
-
+                        .fillMaxSize(),
+                    model = images[it],
+                    contentScale = ContentScale.Crop,
+                    contentDescription = null
                 )
+            }
+
+            Row(
+                Modifier
+                    .height(30.dp)
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                repeat(images.size) { iteration ->
+                    val color =
+                        if (pagerState.currentPage == iteration) Color.White else Color.LightGray
+                    Box(
+                        modifier = Modifier
+                            .padding(5.dp)
+                            .clip(CircleShape)
+                            .background(color)
+                            .size(8.dp)
+
+                    )
+                }
+            }
+        } else {
+            Box(modifier = Modifier.height(30.dp)) {
+                Loading()
             }
         }
     }
 }
 
 @Composable
-private fun UserDetails(user: SimpleUser) {
+private fun UserDetails(user: SimpleUser?) {
     Row(
         modifier = Modifier
             .padding(horizontal = 20.dp, vertical = 10.dp),
@@ -187,12 +192,12 @@ private fun UserDetails(user: SimpleUser) {
             modifier = Modifier
                 .size(40.dp)
                 .clip(CircleShape),
-            model = user.avatar,
+            model = user?.avatar,
             contentDescription = null
         )
         Spacer(modifier = Modifier.width(10.dp))
         Text(
-            text = user.name,
+            text = user?.name.orEmpty(),
             style = MaterialTheme.typography.subtitle2,
         )
     }
@@ -256,6 +261,23 @@ private fun SectionLabel(name: String) {
         text = name,
         style = MaterialTheme.typography.h6
     )
+}
+
+private fun LazyGridScope.SuggestedProducts(
+    items: List<SimpleProduct>?,
+    label: String,
+    onItemClick: (String) -> Unit
+) {
+    item(span = { GridItemSpan(2) }) { SectionLabel(name = label) }
+    if (items != null) {
+        items(items) {
+            SimilarProductItem(it) {
+                onItemClick(it.id)
+            }
+        }
+    } else {
+        item { Loading() }
+    }
 }
 
 @Composable
