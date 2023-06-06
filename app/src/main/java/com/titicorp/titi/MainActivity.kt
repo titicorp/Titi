@@ -45,50 +45,57 @@ class MainActivity : AppCompatActivity() {
         setContent {
             TitiTheme {
                 val navController = rememberNavController()
+                val navBackStackEntry by navController.currentBackStackEntryAsState()
+                val currentDestination = navBackStackEntry?.destination
+                val isMainScreen = currentDestination?.route?.startsWith(Screen.Main.prefix) == true
+
                 Scaffold(
                     bottomBar = {
-                        BottomNavigation {
-                            val navBackStackEntry by navController.currentBackStackEntryAsState()
-                            val currentDestination = navBackStackEntry?.destination
-                            Screen.Main.all.forEach { screen ->
-                                BottomNavigationItem(
-                                    icon = {
-                                        Icon(
-                                            painter = painterResource(screen.icon),
-                                            contentDescription = null
-                                        )
-                                    },
-                                    label = { Text(stringResource(screen.name)) },
-                                    selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
-                                    onClick = {
-                                        navController.navigate(screen.route) {
-                                            // Pop up to the start destination of the graph to
-                                            // avoid building up a large stack of destinations
-                                            // on the back stack as users select items
-                                            popUpTo(navController.graph.findStartDestination().id) {
-                                                saveState = true
+                        if (isMainScreen) {
+                            BottomNavigation {
+                                val mainScreens = listOf(Screen.Main.Home, Screen.Main.Category, Screen.Main.Chats, Screen.Main.My)
+                                mainScreens.forEach { screen ->
+                                    BottomNavigationItem(
+                                        icon = {
+                                            Icon(
+                                                painter = painterResource(screen.icon),
+                                                contentDescription = null
+                                            )
+                                        },
+                                        label = { Text(stringResource(screen.name)) },
+                                        selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
+                                        onClick = {
+                                            navController.navigate(screen.route) {
+                                                // Pop up to the start destination of the graph to
+                                                // avoid building up a large stack of destinations
+                                                // on the back stack as users select items
+                                                popUpTo(navController.graph.findStartDestination().id) {
+                                                    saveState = true
+                                                }
+                                                // Avoid multiple copies of the same destination when
+                                                // reselecting the same item
+                                                launchSingleTop = true
+                                                // Restore state when reselecting a previously selected item
+                                                restoreState = true
                                             }
-                                            // Avoid multiple copies of the same destination when
-                                            // reselecting the same item
-                                            launchSingleTop = true
-                                            // Restore state when reselecting a previously selected item
-                                            restoreState = true
                                         }
-                                    }
-                                )
+                                    )
+                                }
                             }
                         }
                     },
                     floatingActionButton = {
-                        FloatingActionButton(
-                            onClick = { navController.navigate(Screen.NewProduct.route) }
-                        ) {
-                            Icon(
-                                modifier = Modifier
-                                    .size(24.dp),
-                                painter = painterResource(id = R.drawable.add),
-                                contentDescription = null
-                            )
+                        if (isMainScreen) {
+                            FloatingActionButton(
+                                onClick = { navController.navigate(Screen.NewProduct.route) }
+                            ) {
+                                Icon(
+                                    modifier = Modifier
+                                        .size(24.dp),
+                                    painter = painterResource(id = R.drawable.add),
+                                    contentDescription = null
+                                )
+                            }
                         }
                     }
                 ) { innerPadding ->

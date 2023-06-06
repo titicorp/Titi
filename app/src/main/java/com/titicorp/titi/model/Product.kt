@@ -9,9 +9,12 @@ data class Product(
     val id: String,
     val title: String? = null,
     val price: Long,
-    val createdAt: String,
+    val createdAt: Long,
     val description: String? = null,
     @SerializedName("presignedUrls")
     val images: List<String>,
-    val user: SimpleUser? = null,
+    val owner: SimpleUser? = null,
+    val favoriteCount: Int = 0,
+    val messageCount: Int = 0,
+    val seenCount: Int = 0,
 )

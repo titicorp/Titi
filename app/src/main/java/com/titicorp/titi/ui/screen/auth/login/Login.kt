@@ -26,8 +26,8 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.NavOptions
 import androidx.navigation.navOptions
+import com.titicorp.titi.ui.screen.Screen
 import com.titicorp.titi.ui.screen.auth.AuthViewModel
 import kotlinx.coroutines.launch
 
@@ -85,7 +85,7 @@ fun Login(
                     scope.launch {
                         val loggedIn = viewModel.login(phoneNumber, password)
                         if (loggedIn) {
-                            navController.navigate("home")
+                            navController.navigate(Screen.Main.Home.route)
                         }
                     }
                 },

@@ -127,7 +127,7 @@ fun ProductItem(
                 style = MaterialTheme.typography.subtitle1
             )
             Text(
-                text = product.createdAt,
+                text = product.createdAt.toReadableTime(),
                 style = MaterialTheme.typography.caption
             )
             Text(
@@ -150,7 +150,7 @@ fun ProductItem(
             )
             Spacer(modifier = Modifier.width(5.dp))
             Text(
-                text = "2",
+                text = product.messageCount.toString(),
                 style = MaterialTheme.typography.overline,
             )
         }

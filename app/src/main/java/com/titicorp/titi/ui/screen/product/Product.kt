@@ -68,12 +68,16 @@ fun Product(
                         .fillMaxSize()
                 ) {
                     Images(uiState.product?.images)
-                    UserDetails(uiState.product?.user)
+                    UserDetails(uiState.product?.owner)
                     Divider()
-                    Title()
+                    Title(uiState.product?.title)
                     CategoryAndTime()
-                    Description()
-                    Metas()
+                    Description(uiState.product?.description)
+                    Metas(
+                        favoriteCount = uiState.product?.favoriteCount ?: 0,
+                        messageCount = uiState.product?.messageCount ?: 0,
+                        seenCount = uiState.product?.seenCount ?: 0
+                    )
                     Divider()
                 }
             }
@@ -193,6 +197,7 @@ private fun UserDetails(user: SimpleUser?) {
                 .size(40.dp)
                 .clip(CircleShape),
             model = user?.avatar,
+            contentScale = ContentScale.Crop,
             contentDescription = null
         )
         Spacer(modifier = Modifier.width(10.dp))
@@ -204,11 +209,11 @@ private fun UserDetails(user: SimpleUser?) {
 }
 
 @Composable
-private fun Title() {
+private fun Title(title: String?) {
     Text(
         modifier = Modifier
             .padding(start = 20.dp, top = 20.dp, end = 20.dp, bottom = 5.dp),
-        text = "iPhone 11 Pro Max",
+        text = title.orEmpty(),
         style = MaterialTheme.typography.h6,
     )
 }
@@ -228,27 +233,31 @@ private fun CategoryAndTime() {
 }
 
 @Composable
-private fun Description() {
+private fun Description(description: String?) {
     Text(
         modifier = Modifier
             .padding(20.dp),
-        text = LoremIpsum(50).values.first(),
+        text = description.orEmpty(),
         style = MaterialTheme.typography.body1,
     )
 }
 
 @Composable
-private fun Metas() {
+private fun Metas(
+    favoriteCount: Int = 0,
+    messageCount: Int = 0,
+    seenCount: Int = 0,
+) {
     Row(
         modifier = Modifier
             .padding(horizontal = 20.dp, vertical = 20.dp),
     ) {
         ProvideTextStyle(value = MaterialTheme.typography.overline) {
-            Text(text = "Chats 2")
+            Text(text = "Chats $messageCount")
             Text(text = " · ")
-            Text(text = "Loved 5")
+            Text(text = "Loved $favoriteCount")
             Text(text = " · ")
-            Text(text = "Seen 203")
+            Text(text = "Seen $seenCount")
         }
     }
 }

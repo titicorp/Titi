@@ -25,7 +25,7 @@ interface TitiService {
     @GET("/items")
     suspend fun getSimpleProducts(): SimpleProducts
 
-    @GET("/item/{id}")
+    @GET("/items/{id}")
     suspend fun getProductDetails(
         @Path("id") id: String
     ): Product

@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.navOptions
+import com.titicorp.titi.ui.screen.Screen
 import com.titicorp.titi.ui.screen.auth.AuthViewModel
 import kotlinx.coroutines.launch
 
@@ -77,7 +78,7 @@ fun Register(
             OutlinedButton(
                 onClick = {
                     navController.navigate(
-                        route = "login",
+                        route = Screen.Auth.Login.route,
                         navOptions = navOptions {
                             popUpTo("login") {
                                 inclusive = true
@@ -93,7 +94,7 @@ fun Register(
                     scope.launch {
                         val loggedIn = viewModel.register(name, phoneNumber, password)
                         if (loggedIn) {
-                            navController.navigate("home")
+                            navController.navigate(Screen.Main.Home.route)
                         }
                     }
                 },

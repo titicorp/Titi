@@ -13,32 +13,33 @@ sealed class Screen(
         @StringRes val name: Int,
         @DrawableRes val icon: Int,
     ) : Screen(route) {
+
         object Home : Main(
-            route = "home",
+            route = "${prefix}_home",
             name = R.string.screen_home,
             icon = R.drawable.screen_home,
         )
 
         object Category : Main(
-            route = "category",
+            route = "${prefix}_category",
             name = R.string.screen_category,
             icon = R.drawable.screen_category,
         )
 
         object Chats : Main(
-            route = "chats",
+            route = "${prefix}_chats",
             name = R.string.screen_chats,
             icon = R.drawable.screen_chat,
         )
 
         object My : Main(
-            route = "my",
+            route = "${prefix}_my",
             name = R.string.screen_my,
             icon = R.drawable.screen_my,
         )
 
         companion object {
-            val all = listOf(Home, Category, Chats, My)
+            const val prefix = "main"
         }
     }
 

@@ -7,5 +7,5 @@ private val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
 
 
 fun Long.toReadableTime(): String {
-    return dateFormat.format(this)
+    return dateFormat.format(this * 1000)
 }
