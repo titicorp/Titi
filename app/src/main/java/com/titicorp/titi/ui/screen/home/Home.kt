@@ -30,6 +30,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.titicorp.titi.R
+import com.titicorp.titi.auth.UserManager
 import com.titicorp.titi.model.SimpleProduct
 import com.titicorp.titi.ui.common.Loading
 import com.titicorp.titi.utils.toReadableTime
@@ -43,7 +44,7 @@ fun Home(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        TopNavigation()
+        TopNavigation(navController)
         Divider()
 
         val uiState by viewModel.uiState.collectAsState()
@@ -62,7 +63,9 @@ fun Home(
 }
 
 @Composable
-private fun TopNavigation() {
+private fun TopNavigation(
+    navController: NavHostController,
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -76,7 +79,10 @@ private fun TopNavigation() {
         ) {
             Text(
                 modifier = Modifier
-                    .clickable { },
+                    .clickable {
+                        UserManager.logout()
+                        navController.navigate("login")
+                    },
                 text = "Dushanbe",
             )
             Icon(

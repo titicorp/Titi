@@ -6,12 +6,15 @@ import com.sendbird.android.handler.InitResultHandler
 import com.sendbird.uikit.SendbirdUIKit
 import com.sendbird.uikit.adapter.SendbirdUIKitAdapter
 import com.sendbird.uikit.interfaces.UserInfo
+import com.titicorp.titi.auth.UserManager
 
 
 class TitiApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+
+        UserManager.init(this)
 
         SendbirdUIKit.init(object : SendbirdUIKitAdapter {
             override fun getAppId(): String {

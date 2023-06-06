@@ -12,6 +12,8 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -24,7 +26,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.titicorp.titi.auth.UserManager
 import com.titicorp.titi.ui.screen.Screen
+import com.titicorp.titi.ui.screen.auth.login.Login
+import com.titicorp.titi.ui.screen.auth.register.Register
 import com.titicorp.titi.ui.screen.category.Category
 import com.titicorp.titi.ui.screen.chats.Chats
 import com.titicorp.titi.ui.screen.chats.newchat.NewChat
@@ -87,11 +92,21 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
                 ) { innerPadding ->
+
+                    val loggedIn by remember {
+                        mutableStateOf(UserManager.loggedIn)
+                    }
+
+                    val startDestination = if (loggedIn.not()) Screen.Auth.Login else Screen.Main.Home
+
                     NavHost(
                         navController,
-                        startDestination = Screen.Main.Home.route,
+                        startDestination = startDestination.route,
                         Modifier.padding(innerPadding)
                     ) {
+                        composable(Screen.Auth.Login.route) { Login(navController) }
+                        composable(Screen.Auth.Register.route) { Register(navController) }
+
                         composable(Screen.Main.Home.route) { Home(navController) }
                         composable(Screen.Main.Category.route) { Category(navController) }
                         composable(Screen.Main.Chats.route) { Chats(navController) }

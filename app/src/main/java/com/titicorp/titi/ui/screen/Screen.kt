@@ -42,9 +42,14 @@ sealed class Screen(
         }
     }
 
-    object Product: Screen("product/{id}")
+    object Product : Screen("product/{id}")
 
-    object NewChat: Screen("new_chat")
+    object NewChat : Screen("new_chat")
 
-    object NewProduct: Screen("new_product")
+    object NewProduct : Screen("new_product")
+
+    sealed class Auth(route: String) : Screen(route) {
+        object Login : Auth("login")
+        object Register : Auth("register")
+    }
 }
